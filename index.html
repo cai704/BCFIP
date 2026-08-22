@@ -9,15 +9,15 @@
 	<meta name="author" content="BCFIP">
 	<title>BCFIP 优选IP | Cloudflare BestIP</title>
 	<style>
-		:root { --bg-color:#FFFFFF; --card-bg:#FFFFFF; --accent:#4285F4; --accent-soft:rgba(66,133,244,.12); --accent-border:rgba(66,133,244,.4); --text-main:#202124; --text-muted:#5F6368; --border-color:#DADCE0; --code-bg:#F1F3F4; --code-text:#1A73E8; --ok:#34A853; --stripe-a:#FFFFFF; --stripe-b:#F8F9FA; }
+		:root { --bg-color:#FFFFFF; --card-bg:#FFFFFF; --accent:#0969DA; --accent-soft:rgba(9,105,218,.10); --accent-border:rgba(9,105,218,.4); --text-main:#1F2328; --text-muted:#656D76; --border-color:#D0D7DE; --code-bg:#F6F8FA; --code-text:#0969DA; --ok:#1A7F37; --stripe-a:#FFFFFF; --stripe-b:#F6F8FA; }
 		* { box-sizing:border-box; margin:0; padding:0; }
-		body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background-color:var(--bg-color); background-image:radial-gradient(circle at 50% 0%, rgba(66,133,244,.10) 0%, transparent 600px); background-repeat:no-repeat; color:var(--text-main); line-height:1.6; padding:50px 20px; overflow-x:hidden; }
+		body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background-color:var(--bg-color); background-image:radial-gradient(circle at 50% 0%, rgba(9,105,218,.10) 0%, transparent 600px); background-repeat:no-repeat; color:var(--text-main); line-height:1.6; padding:50px 20px; overflow-x:hidden; }
 		.container { max-width:1080px; margin:0 auto; }
 		header { text-align:center; margin-bottom:45px; }
-		h1 { font-size:2.3rem; margin-bottom:16px; font-weight:800; letter-spacing:-.02em; background:linear-gradient(to right,#202124,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+		h1 { font-size:2.3rem; margin-bottom:16px; font-weight:800; letter-spacing:-.02em; background:linear-gradient(to right,#1F2328,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 		.tips { display:block; font-size:.9rem; color:var(--text-muted); margin-bottom:15px; }
-		h2 { font-size:1.5rem; margin:45px 0 20px; color:#fff; display:flex; align-items:center; column-gap:14px; }
-		h2::before { content:""; width:5px; height:1.3rem; background:var(--accent); border-radius:10px; box-shadow:0 0 15px var(--accent),0 0 5px rgba(66,133,244,.5); }
+		h2 { font-size:1.5rem; margin:45px 0 20px; color:var(--text-main); display:flex; align-items:center; column-gap:14px; }
+		h2::before { content:""; width:5px; height:1.3rem; background:var(--accent); border-radius:10px; box-shadow:0 0 15px var(--accent),0 0 5px rgba(9,105,218,.5); }
 		h2:first-of-type { margin-top:0; }
 		.tbl-wrap { overflow-x:auto; background-color:var(--card-bg); border:1px solid var(--border-color); border-radius:14px; box-shadow:0 8px 32px rgba(0,0,0,.35); margin-bottom:45px; }
 		table { width:100%; border-collapse:collapse; font-size:.88rem; min-width:640px; }
@@ -25,13 +25,13 @@
 		tr:last-child td { border-bottom:none; }
 		tbody tr:nth-child(odd) { background-color:var(--stripe-a); }
 		tbody tr:nth-child(even) { background-color:var(--stripe-b); }
-		tbody tr:hover { background-color:rgba(66,133,244,.12); }
-		th { color:var(--accent); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; background:rgba(66,133,244,.08); border-bottom:1px solid var(--accent-border); }
-		td.src { font-weight:700; color:#fff; white-space:nowrap; }
-		.tag { display:inline-flex; align-items:center; font-size:.68rem; font-weight:600; padding:1px 7px; border-radius:4px; color:var(--accent); border:1px solid var(--accent-border); background:rgba(66,133,244,.1); margin-top:4px; white-space:nowrap; }
+		tbody tr:hover { background-color:rgba(9,105,218,.12); }
+		th { color:var(--accent); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; background:rgba(9,105,218,.08); border-bottom:1px solid var(--accent-border); }
+		td.src { font-weight:700; color:var(--text-main); white-space:nowrap; }
+		.tag { display:inline-flex; align-items:center; font-size:.68rem; font-weight:600; padding:1px 7px; border-radius:4px; color:var(--accent); border:1px solid var(--accent-border); background:rgba(9,105,218,.1); margin-top:4px; white-space:nowrap; }
 		.url-text { font-family:ui-monospace,SFMono-Regular,Monaco,Consolas,monospace; font-size:.82rem; color:var(--code-text); word-break:break-all; user-select:all; display:inline-block; max-width:620px; }
-		.copy-btn { background:rgba(66,133,244,.14); color:var(--accent); border:1px solid var(--accent-border); height:32px; padding:0 16px; border-radius:7px; cursor:pointer; font-size:.82rem; font-weight:700; transition:all .3s; white-space:nowrap; }
-		.copy-btn:hover { background:var(--accent); color:#fff; box-shadow:0 0 15px rgba(66,133,244,.35); }
+		.copy-btn { background:rgba(9,105,218,.14); color:var(--accent); border:1px solid var(--accent-border); height:32px; padding:0 16px; border-radius:7px; cursor:pointer; font-size:.82rem; font-weight:700; transition:all .3s; white-space:nowrap; }
+		.copy-btn:hover { background:var(--accent); color:#fff; box-shadow:0 0 15px rgba(9,105,218,.35); }
 		.copy-btn.success { background:var(--ok); border-color:var(--ok); color:#fff; }
 		footer { text-align:center; margin-top:20px; padding-top:28px; border-top:1px solid var(--border-color); font-size:.85rem; color:var(--text-muted); }
 		footer a { color:var(--accent); text-decoration:none; }
