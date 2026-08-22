@@ -1,0 +1,116 @@
+name: gslege
+
+on:
+  schedule:
+    - cron: '9 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and Process Data
+        run: |
+          mkdir -p gslege
+          BJ_TIME=$(date -d "+8 hours" "+%m-%d %H:%M")
+          HAS_CHANGES=false
+          
+          URLS=(
+            "https://raw.githubusercontent.com/gslege/CloudflareIP/refs/heads/main/Cfxyz.txt"
+            "https://raw.githubusercontent.com/gslege/CloudflareIP/refs/heads/main/JP.txt"
+            "https://raw.githubusercontent.com/gslege/CloudflareIP/refs/heads/main/NL.txt"
+            "https://raw.githubusercontent.com/gslege/CloudflareIP/refs/heads/main/US.txt"
+            "https://raw.githubusercontent.com/gslege/CloudflareIP/refs/heads/main/DE.txt"
+            "https://raw.githubusercontent.com/gslege/CloudflareIP/refs/heads/main/SG.txt"
+          )
+
+          for URL in "${URLS[@]}"; do
+            FILENAME=$(basename "$URL")
+            TARGET_FILE="gslege/$FILENAME"
+            TMP_NEW="new_${FILENAME}.tmp"
+            
+            if [ "$FILENAME" = "Cfxyz.txt" ]; then
+                REGION="未知"
+            else
+                CODE=$(echo "${FILENAME%.*}" | tr '[:lower:]' '[:upper:]')
+                case "$CODE" in
+                  JP) REGION="日本 JP";;
+                  US) REGION="美国 US";;
+                  DE) REGION="德国 DE";;
+                  SG) REGION="新加坡 SG";;
+                  NL) REGION="荷兰 NL";;
+                  *) REGION="未知";;
+                esac
+            fi
+            
+            echo "正在处理: $FILENAME (地区: $REGION)"
+            
+            curl -sL -H "Cache-Control: no-cache" "$URL" | awk -v region="$REGION" '{
+                gsub(/\r/, "", $0);
+                if (length($0) > 0) {
+                    n = split($0, a, "#");
+                    ip_full = a[1];
+                    if (ip_full ~ /:/) { output_head = ip_full; ipver = "IPv6" } else { output_head = ip_full ":443"; ipver = "IPv4" }
+                    
+                    line = output_head "#Gslege | " region " | " ipver " | 未知"
+                    
+                    # 仅在这一行没出现过时才打印，保持原有顺序
+                    if (!seen[line]++) {
+                        print line
+                    }
+                }
+            }' > "$TMP_NEW"
+
+            if [ ! -s "$TMP_NEW" ]; then
+              echo "跳过: $FILENAME 内容为空"
+              rm -f "$TMP_NEW"
+              continue
+            fi
+
+            FILE_CHANGED=false
+            if [ ! -f "$TARGET_FILE" ]; then
+                FILE_CHANGED=true
+            else
+                sed '1d;$d' "$TARGET_FILE" | sed 's/\r//g' > old_clean.tmp
+                if ! diff -q old_clean.tmp "$TMP_NEW" > /dev/null; then
+                    FILE_CHANGED=true
+                fi
+                rm -f old_clean.tmp
+            fi
+
+            if [ "$FILE_CHANGED" = true ]; then
+                HAS_CHANGES=true
+                echo "-> 检测到实际内容变更，正在更新文件"
+                echo "162.159.198.1:443#Gslege优选 $REGION | $BJ_TIME" > "$TARGET_FILE"
+                cat "$TMP_NEW" >> "$TARGET_FILE"
+                echo "162.159.197.1:443#Gslege优选" >> "$TARGET_FILE"
+            else
+                echo "-> 内容无实质变化，跳过"
+            fi
+            
+            rm -f "$TMP_NEW"
+          done
+
+          echo "has_changes=$HAS_CHANGES" >> $GITHUB_ENV
+
+      - name: Commit and Push
+        run: |
+          if [ "${{ env.has_changes }}" = "true" ]; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add gslege/
+            # 检查是否有文件真正被 git 识别为变化
+            if git diff --staged --quiet; then
+              echo "Git 未检测到文件变化，取消提交。"
+            else
+              git commit -m "Gslege $(date -d "+8 hours" '+%Y-%m-%d %H:%M:%S')"
+              git pull --rebase origin main
+              git push origin main
+            fi
+          fi

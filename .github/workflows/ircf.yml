@@ -1,0 +1,39 @@
+name: ircf
+
+on:
+  schedule:
+    - cron: '12 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and Process Data
+        run: |
+          mkdir -p ircf
+          
+          # 使用 curl 获取数据并使用 jq 解析
+          # 格式：ip:443#IRCF优选 | ip
+          curl -s "https://raw.githubusercontent.com/ircfspace/cf2dns/refs/heads/master/list/ipv4.json" | \
+          jq -r '.[] | "\(.ip):443#IRCF | 未知 | IPv4 | 未知"' > ircf/ipv4.txt
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add ircf/ipv4.txt
+          
+          # 检查是否有变更再提交
+          if git diff --staged --quiet; then
+            echo "没有发现内容变化，跳过提交。"
+          else
+            git commit -m "IRCF $(date -d "+8 hours" '+%Y-%m-%d %H:%M:%S')"
+            git push origin main
+          fi

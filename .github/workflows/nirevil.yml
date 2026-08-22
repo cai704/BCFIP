@@ -1,0 +1,86 @@
+name: nirevil
+
+on:
+  schedule:
+    - cron: '30 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and Process Data
+        run: |
+          mkdir -p nirevil
+          BJ_TIME=$(date -d "+8 hours" "+%m-%d %H:%M")
+          HAS_CHANGES=false
+
+          # 定义处理函数
+          process_data() {
+            local type=$1 # v4 或 v6
+            local url=$2
+            local target_file="nirevil/ip$type.txt"
+            local tmp_new="new_nodes_$type.tmp"
+            local tmp_old="old_nodes_$type.tmp"
+            
+            # 使用 jq 处理数据
+            # 如果是 v6，则在 IP 两端加上 []
+            curl -s "$url" | jq -r --arg type "$type" '
+              .[] | 
+              (if .line == "CM" then "移动" 
+               elif .line == "CU" then "联通" 
+               elif .line == "CT" then "电信" 
+               else "未知" end) as $isp |
+              (if $type == "v6" then "[\(.ip)]:443#NiREvil | 未知 | IPv6 | \($isp)"
+               else "\(.ip):443#NiREvil | 未知 | IPv4 | \($isp)" end)
+            ' > "$tmp_new"
+
+            # 对比逻辑
+            local should_write=false
+            if [ -f "$target_file" ]; then
+              sed '1d;$d' "$target_file" > "$tmp_old"
+              if ! diff -q "$tmp_old" "$tmp_new" > /dev/null; then
+                should_write=true
+              fi
+            else
+              should_write=true
+            fi
+
+            # 写入文件
+            if [ "$should_write" = true ]; then
+              local label_name="IPv4"
+              if [ "$type" == "v6" ]; then label_name="IPv6"; fi
+              
+              echo "162.159.198.1:443#NiREvil优选$label_name | $BJ_TIME" > "$target_file"
+              cat "$tmp_new" >> "$target_file"
+              echo "162.159.197.1:443#NiREvil优选$label_name" >> "$target_file"
+              HAS_CHANGES=true
+            fi
+          }
+
+          # 执行 v4 处理
+          process_data "v4" "https://raw.githubusercontent.com/NiREvil/vless/refs/heads/main/sub/Cf-ipv4.json"
+          
+          # 执行 v6 处理
+          process_data "v6" "https://raw.githubusercontent.com/NiREvil/vless/refs/heads/main/sub/Cf-ipv6.json"
+
+          echo "has_changes=$HAS_CHANGES" >> $GITHUB_ENV
+
+      - name: Commit and Push
+        run: |
+          if [ "${{ env.has_changes }}" = "true" ]; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add nirevil/*.txt
+            git commit -m "NiREvil $(date -d "+8 hours" '+%Y-%m-%d %H:%M:%S')"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "内容无实质变化，跳过提交。"
+          fi

@@ -1,0 +1,157 @@
+name: uouin
+
+on:
+  schedule:
+    - cron: '51 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright beautifulsoup4
+          playwright install chromium
+
+      - name: Scrape and Process
+        id: process_data
+        run: |
+          mkdir -p uouin
+          
+          cat << 'EOF' > scraper.py
+          import asyncio
+          from playwright.async_api import async_playwright
+          from bs4 import BeautifulSoup
+          import datetime
+          import os
+          import re
+          import ipaddress
+
+          def is_valid_ipv4(ip_str):
+              try:
+                  return ipaddress.ip_address(ip_str).version == 4
+              except ValueError:
+                  return False
+
+          async def fetch_and_parse():
+              async with async_playwright() as p:
+                  browser = await p.chromium.launch(
+                      headless=True, 
+                      args=['--disable-blink-features=AutomationControlled']
+                  )
+                  context = await browser.new_context(
+                      user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                  )
+                  page = await context.new_page()
+                  
+                  url = "https://api.uouin.com/cloudflare.html"
+                  try:
+                      await page.goto(url, wait_until="networkidle", timeout=10000)
+                      
+                      try:
+                          await page.wait_for_selector("table tr:nth-child(2)", timeout=10000)
+                      except:
+                          print("等待数据超时，可能页面未正常加载内容")
+                          await browser.close()
+                          return False
+                      
+                      # 3. 获取渲染后的完整 HTML
+                      content = await page.content()
+                      await browser.close()
+                      
+                      soup = BeautifulSoup(content, 'html.parser')
+                      table = soup.find('table')
+                      if not table:
+                          return False
+
+                      rows = table.find_all('tr')
+                      new_nodes = []
+                      ipv4_pattern = r'(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.(?:25[0-5]|2[0-4]\d|[01]?\d\d?)'
+
+                      for row in rows:
+                          cols = row.find_all('td')
+                          if len(cols) >= 6:
+                              line = cols[0].get_text(strip=True)
+                              if "IPv6" in line.upper():
+                                  continue
+                              
+                              row_html = str(row)
+                              found_ips = re.findall(ipv4_pattern, row_html)
+                              
+                              valid_ip = None
+                              for candidate in found_ips:
+                                  if is_valid_ipv4(candidate):
+                                      valid_ip = candidate
+                                      break
+                              
+                              if not valid_ip:
+                                  continue
+
+                              latency = cols[3].get_text(strip=True)
+                              speed = cols[4].get_text(strip=True)
+                              
+                              # 格式化输出
+                              isp = line if line in ("移动", "联通", "电信") else "未知"
+                              formatted = f"{valid_ip}:443#麒麟优选 | 未知 | IPv4 | {isp}"
+                              new_nodes.append(formatted)
+
+                      if not new_nodes:
+                          print("未能提取到有效数据，停止更新。")
+                          return False
+                      
+                      output_path = os.path.join("uouin", "all.txt")
+                      old_nodes = []
+                      if os.path.exists(output_path):
+                          with open(output_path, "r", encoding="utf-8") as f:
+                              lines = f.readlines()
+                              if len(lines) > 2:
+                                  old_nodes = [l.strip() for l in lines[1:-1]]
+
+                      if new_nodes == old_nodes:
+                          print("内容未发生变化，跳过更新。")
+                          return False
+
+                      bj_time = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime('%m-%d %H:%M')
+                      header = f"162.159.198.1:443#麒麟优选 | {bj_time}"
+                      footer = "162.159.197.1:443#麒麟优选"
+
+                      with open(output_path, "w", encoding="utf-8") as f:
+                          f.write(header + "\n")
+                          for node in new_nodes:
+                              f.write(node + "\n")
+                          f.write(footer + "\n")
+                      
+                      print(f"成功抓取 {len(new_nodes)} 条新数据。")
+                      return True
+
+                  except Exception as e:
+                      print(f"Error: {e}")
+                      return False
+
+          if __name__ == "__main__":
+              changed = asyncio.run(fetch_and_parse())
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+                  print(f"changed={str(changed).lower()}", file=fh)
+          EOF
+          python scraper.py
+
+      - name: Commit and Push
+        if: steps.process_data.outputs.changed == 'true'
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Action"
+          git add uouin/all.txt
+          git commit -m "uouin $(date +'%Y-%m-%d %H:%M')"
+          git push

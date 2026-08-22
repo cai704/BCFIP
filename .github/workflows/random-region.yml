@@ -1,0 +1,179 @@
+name: random-region
+
+on:
+  schedule:
+    - cron: '33 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-and-process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: |
+          pip install requests
+
+      - name: 执行数据处理脚本
+        id: process_data
+        env:
+          MY_PROXY_URL: ${{ secrets.PROXY_URL }}
+        run: |
+          python -c '
+          import os
+          import sys
+          import json
+          import random
+          import requests
+
+          url = os.environ.get("MY_PROXY_URL")
+          if not url:
+              print("错误: 未在 GitHub Secrets 中配置 PROXY_URL 变量！")
+              sys.exit(0)
+              
+          try:
+              response = requests.get(url, timeout=15)
+              if response.status_code != 200:
+                  print(f"请求失败，状态码: {response.status_code}")
+                  sys.exit(1)
+              data = response.json()
+          except Exception as e:
+              print(f"数据获取异常: {e}")
+              sys.exit(1)
+
+          if not data or "list" not in data or not data.get("list", {}).get("country"):
+              print("获取到的元数据为空或格式不正确，跳过后续操作。")
+              sys.exit(1)
+
+          country_order_dict = data.get("list", {}).get("country", {})
+          items = data.get("list", {}).get("nodes", []) if "nodes" in data.get("list", {}) else data.get("list", [])
+          
+          if not isinstance(items, list):
+              if isinstance(data, dict) and "nodes" in data:
+                  items = data["nodes"]
+              elif isinstance(data, dict):
+                  for val in data.values():
+                      if isinstance(val, list) and len(val) > 0 and "ip" in val[0]:
+                          items = val
+                          break
+
+          if not items or len(items) == 0:
+              print("未检测到有效的 IP 节点数据，终止提交。")
+              sys.exit(1)
+
+          base_dir = "random-region"
+          os.makedirs(base_dir, exist_ok=True)
+
+          def select_port(ports):
+              if not ports:
+                  return 443
+              if 443 in ports:
+                  return 443
+              if 8443 in ports:
+                  return 8443
+              return ports[0]
+
+          country_map = {}
+          for item in items:
+              ip = item.get("ip")
+              ports = item.get("port", [])
+              meta = item.get("meta", {})
+              country = meta.get("country")
+              if not ip or not country:
+                  continue
+              if country in ["CN", "Unknown"]:
+                  continue
+              country_cn = meta.get("country_cn", country)
+              
+              colo_info = meta.get("colo", {})
+              iata = colo_info.get("iata") if isinstance(colo_info, dict) else meta.get("iata", "UNK")
+
+              port = select_port(ports)
+              line = f"{ip}:{port}#地区随机 | {country_cn} {country} | {iata} | {ip}:{port}"
+              
+              if country not in country_map:
+                  country_map[country] = set()
+              
+              country_map[country].add(line)
+
+          mix_blocks = {}
+          mix_blocks2 = {}
+
+          for country, lines_set in country_map.items():
+              lines_list = list(lines_set)
+              if not lines_list:
+                  continue
+
+              random.shuffle(lines_list)
+              mix_blocks[country] = lines_list[:5]
+              mix_blocks2[country] = lines_list[:10]
+              folder_path = os.path.join(base_dir, country)
+              os.makedirs(folder_path, exist_ok=True)
+
+              with open(os.path.join(folder_path, "all.txt"), "w", encoding="utf-8") as f:
+                  f.write("\n".join(lines_list) + "\n")
+
+              for count in [10, 20, 50, 100]:
+                  sampled_lines = lines_list[:count]
+                  with open(os.path.join(folder_path, f"{count}.txt"), "w", encoding="utf-8") as f:
+                      f.write("\n".join(sampled_lines) + "\n")
+
+          all_mix_lines = []
+          all_mix2_lines = []
+          
+          for country in country_order_dict.keys():
+              if country in mix_blocks:
+                  all_mix_lines.extend(mix_blocks[country])
+              if country in mix_blocks2:
+                  all_mix2_lines.extend(mix_blocks2[country])
+          
+          for country, lines in mix_blocks.items():
+              if country not in country_order_dict:
+                  all_mix_lines.extend(lines)
+          for country, lines in mix_blocks2.items():
+              if country not in country_order_dict:
+                  all_mix2_lines.extend(lines)
+
+          if all_mix_lines:
+              with open(os.path.join(base_dir, "mix.txt"), "w", encoding="utf-8") as f:
+                  f.write("\n".join(all_mix_lines) + "\n")     
+          if all_mix2_lines:
+              with open(os.path.join(base_dir, "mix2.txt"), "w", encoding="utf-8") as f:
+                  f.write("\n".join(all_mix2_lines) + "\n")
+
+          country_list_lines = []
+          if isinstance(country_order_dict, dict):
+              for country_code, count in country_order_dict.items():
+                  if country_code in ["CN", "Unknown"]:
+                      continue
+                  country_list_lines.append(f"{country_code}|{count}")
+          
+          if country_list_lines:
+              with open(os.path.join(base_dir, "list.txt"), "w", encoding="utf-8") as f:
+                  f.write("\n".join(country_list_lines) + "\n")
+
+          print("数据处理成功完成。")
+          '
+        
+      - name: 检查文件是否有变动并提交推送
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add random-region/
+          
+          if git diff --cached --quiet; then
+            echo "没有发现任何内容变动，跳过提交。"
+          else
+            echo "发现内容更新，准备推送库。"
+            git commit -m "random-region"
+            # 使用 pull --rebase 保障并发拉取时的绝对安全，最后推送
+            git pull --rebase origin ${GITHUB_REF##*/}
+            git push origin HEAD
+          fi

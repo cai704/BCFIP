@@ -1,0 +1,54 @@
+name: vps789
+
+on:
+  schedule:
+    - cron: '41 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 镜像优选域名列表
+        run: |
+          mkdir -p vps789
+          BASE="https://raw.githubusercontent.com/wanwushequ/cfyxip/main/vps789"
+          for port in 443 8443; do
+            for count in 10 20 50 100; do
+              SUF=""
+              if [ "$port" = "8443" ]; then SUF="-8443"; fi
+              FILE="vps789/top${count}${SUF}.txt"
+              if ! curl -sL --retry 3 --retry-delay 3 "${BASE}/top${count}${SUF}.txt" -o raw_top.txt; then
+                echo "跳过: top${count}${SUF}.txt 下载失败"
+                continue
+              fi
+              if [ ! -s raw_top.txt ]; then
+                echo "跳过: top${count}${SUF}.txt 为空"
+                continue
+              fi
+              T=$(TZ='Asia/Shanghai' date +'%m-%d %H:%M')
+              echo "162.159.198.1:${port}#VPS789优选域名 TOP${count} | ${T}" > "$FILE"
+              grep -v "BestCF.pages.dev" raw_top.txt >> "$FILE"
+              echo "162.159.197.1:${port}#VPS789优选域名" >> "$FILE"
+              echo "生成: $FILE ($(grep -c '#VPS789' "$FILE") 条)"
+            done
+          done
+
+      - name: 提交并推送
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add vps789/
+          if git diff --cached --quiet; then
+            echo "无变更，跳过提交。"
+          else
+            git commit -m "vps789 $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')"
+            git pull --rebase origin main
+            git push
+          fi

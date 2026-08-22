@@ -1,0 +1,220 @@
+name: tiancheng2
+
+on:
+  schedule:
+    - cron: '45 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install cloudscraper
+
+      - name: Process and Compare
+        run: |
+          # 1. 确保新目标文件夹存在
+          mkdir -p tiancheng2
+          
+          # 2. 使用 Python 脚本绕过 CF 5秒盾并抓取
+          echo "正在通过 Python cloudscraper 抓取数据..."
+          cat << 'EOF' > scraper.py
+          import cloudscraper
+          import sys
+          import re
+
+          def fetch_data():
+              scraper = cloudscraper.create_scraper(
+                  browser={
+                      'browser': 'chrome',
+                      'platform': 'windows',
+                      'desktop': True
+                  }
+              )
+              # https://sni.skylee4.cloudns.ch/tset
+              url = "https://sn1.skylee5.cloudns.ch/tset"
+              try:
+                  res = scraper.get(url, timeout=10)
+                  if res.status_code == 200:
+                      html = res.text
+                      if "<pre" in html:
+                          match = re.search(r'<pre[^>]*>(.*?)</pre>', html, re.S)
+                          if match:
+                              return match.group(1).strip()
+                      return html.strip()
+                  else:
+                      print(f"Error: Status code {res.status_code}", file=sys.stderr)
+                      return None
+              except Exception as e:
+                  print(f"Exception: {str(e)}", file=sys.stderr)
+                  return None
+
+          data = fetch_data()
+          if data:
+              print(data)
+          else:
+              sys.exit(1)
+          EOF
+
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          response=""
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            response=$(python3 scraper.py)
+            if [ $? -eq 0 ] && [ -n "$response" ]; then
+              echo "✅ 数据抓取成功！"
+              break
+            else
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              echo "⚠️ 抓取失败，第 $RETRY_COUNT 次重试..."
+              sleep 5
+            fi
+          done
+
+          if [ -z "$response" ]; then
+            echo "❌ 无法绕过防护，跳过执行。"
+            echo "changes_detected=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # 3. 解码并校验内容
+          decoded_data=$(echo "$response" | base64 -d 2>/dev/null)
+          if [[ ! "$decoded_data" =~ "vless://" ]]; then
+            echo "错误：解码数据格式非法。"
+            echo "changes_detected=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # 4. 解析节点并归类
+          echo "数据校验通过，开始解析节点..."
+          rm -f new_nodes.tmp
+          
+          echo "$decoded_data" | while IFS= read -r line; do
+            if [[ -z "$line" ]]; then continue; fi
+            ip_port=$(echo "$line" | grep -oP '(?<=@).*?(?=\?)')
+            raw_tag=$(echo "$line" | awk -F'#' '{print $2}')
+            tag=$(python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))" "$raw_tag")
+            
+            # --- 注意可能要替换和过滤的#后面的字符 ---
+            remark="$tag"
+            if [[ "$remark" =~ "韩国" || "$remark" =~ "KR" || "$remark" =~ "🇰🇷" ]]; then 
+                location="泡菜欧巴 | KR"
+            elif [[ "$remark" =~ "香港" || "$remark" =~ "HK" || "$remark" =~ "🇭🇰" ]]; then 
+                location="港岛古惑 | HK"
+            elif [[ "$remark" =~ "新加坡" || "$remark" =~ "SG" || "$remark" =~ "🇸🇬" ]]; then 
+                location="坡县狮城 | SG"
+            elif [[ "$remark" =~ "日本" || "$remark" =~ "JP" || "$remark" =~ "🇯🇵" ]]; then 
+                location="小日本子 | JP"
+            elif [[ "$remark" =~ "台湾" || "$remark" =~ "TW" || "$remark" =~ "🇹🇼" ]]; then 
+                location="宝岛正妹 | TW"
+            elif [[ "$remark" =~ "美国" || "$remark" =~ "US" || "$remark" =~ "🇺🇸" ]]; then 
+                location="大漂亮国 | US"
+            elif [[ "$remark" =~ "英国" || "$remark" =~ "UK" || "$remark" =~ "🇬🇧" ]]; then 
+                location="大嘤帝国 | UK"
+            elif [[ "$remark" =~ "俄罗斯" || "$remark" =~ "RU" || "$remark" =~ "🇷🇺" ]]; then 
+                location="战斗民族 | RU"
+            elif [[ "$remark" =~ "德国" || "$remark" =~ "DE" || "$remark" =~ "🇩🇪" ]]; then 
+                location="元首复活 | DE"
+            elif [[ "$remark" =~ "马来西亚" || "$remark" =~ "MY" || "$remark" =~ "🇲🇾" ]]; then 
+                location="大马榴莲 | MY"
+            elif [[ "$remark" =~ "越南" || "$remark" =~ "VN" || "$remark" =~ "🇻🇳" ]]; then 
+                location="西贡咖啡 | VN"
+            elif [[ "$remark" =~ "菲律宾" || "$remark" =~ "PH" || "$remark" =~ "🇵🇭" ]]; then 
+                location="菲常好喝 | PH"
+            elif [[ "$remark" =~ "泰国" || "$remark" =~ "TH" || "$remark" =~ "🇹🇭" ]]; then 
+                location="萨瓦迪卡 | TH"
+            elif [[ "$remark" =~ "印度" || "$remark" =~ "IN" || "$remark" =~ "🇮🇳" ]]; then 
+                location="干净卫生 | IN"
+            elif [[ "$remark" =~ "法国" || "$remark" =~ "FR" || "$remark" =~ "🇫🇷" ]]; then 
+                location="浪漫铁塔 | FR"
+            elif [[ "$remark" =~ "加拿大" || "$remark" =~ "CA" || "$remark" =~ "🇨🇦" ]]; then 
+                location="枫叶之国 | CA"
+            elif [[ "$remark" =~ "土耳其" || "$remark" =~ "TR" || "$remark" =~ "🇹🇷" ]]; then 
+                location="烤肉火鸡 | TR"
+            elif [[ "$remark" =~ "澳大利亚" || "$remark" =~ "AU" || "$remark" =~ "🇦🇺" ]]; then 
+                location="土澳袋鼠 | AU"
+            elif [[ "$remark" =~ "荷兰" || "$remark" =~ "NL" || "$remark" =~ "🇳🇱" ]]; then 
+                location="风车郁金 | NL"    
+            else 
+                location="$tag"
+            fi
+            # -----------------------
+
+            if [[ -n "$ip_port" ]]; then
+              echo "${ip_port}#天诚优选2 | ${location} | ${ip_port}" >> new_nodes.tmp
+            fi
+          done
+
+          # 5. 对比、构建文件与备份
+          OLD_FILE="tiancheng2/all.txt"
+          SHOULD_COMMIT=false
+          if [ -f "$OLD_FILE" ]; then
+            sed '1d;$d' "$OLD_FILE" > old_nodes.tmp
+            if ! diff -q old_nodes.tmp new_nodes.tmp > /dev/null; then
+              echo "检测到内容更新，准备提交。"
+              SHOULD_COMMIT=true
+            fi
+          else
+            echo "初次运行，准备创建新文件。"
+            SHOULD_COMMIT=true
+          fi
+
+          if [ "$SHOULD_COMMIT" = true ]; then
+            BJ_TIME=$(TZ='Asia/Shanghai' date +'%m-%d %H:%M')
+            FOOTER="162.159.197.1:443#天诚优选2"
+            
+            # 备份
+            if [ -f "$OLD_FILE" ]; then
+              mkdir -p tiancheng2/old
+              cp "$OLD_FILE" "tiancheng2/old/$(TZ='Asia/Shanghai' date +%Y-%m-%d-%H_%M_%S).txt"
+            fi
+            
+            rm -f tiancheng2/hk.txt tiancheng2/sg.txt tiancheng2/jp.txt tiancheng2/tw.txt tiancheng2/kr.txt tiancheng2/us.txt
+
+            # 生成 All 版
+            echo "162.159.198.1:443#天诚优选2 全量版 | ${BJ_TIME}" > "tiancheng2/all.txt"
+            [ -f new_nodes.tmp ] && cat new_nodes.tmp >> "tiancheng2/all.txt"
+            echo "$FOOTER" >> "tiancheng2/all.txt"
+
+            # 生成 Mini 版
+            echo "162.159.198.1:443#天诚优选2 迷你版 | ${BJ_TIME}" > "tiancheng2/mini.txt"
+            if [ -f new_nodes.tmp ]; then
+                awk -F'|' '{l=$2; c[l]++; if(c[l]<=5) print $0}' new_nodes.tmp >> "tiancheng2/mini.txt"
+            fi
+            echo "$FOOTER" >> "tiancheng2/mini.txt"
+
+            # 生成分地区版
+            for loc in HK SG JP TW KR US; do
+              f=$(echo "$loc" | tr '[:upper:]' '[:lower:]')
+              if grep -q "| ${loc}" new_nodes.tmp 2>/dev/null; then
+                echo "162.159.198.1:443#天诚优选2 ${loc}版 | ${BJ_TIME}" > "tiancheng2/${f}.txt"
+                grep "| ${loc}" new_nodes.tmp >> "tiancheng2/${f}.txt"
+                echo "$FOOTER" >> "tiancheng2/${f}.txt"
+              fi
+            done
+            
+            echo "COMMIT_TIME=$BJ_TIME" >> $GITHUB_ENV
+            echo "changes_detected=true" >> $GITHUB_ENV
+          else
+            echo "changes_detected=false" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and Push
+        if: env.changes_detected == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "TianCheng2 ${{ env.COMMIT_TIME }}"
+          file_pattern: 'tiancheng2/'
