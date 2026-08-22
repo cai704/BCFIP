@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
+	<meta name="description" content="BCFIP 优选IP - 定时自动更新的CF优选IP列表导航">
+	<meta name="keywords" content="Cloudflare, 优选IP, BestIP, IPv4, IPv6, 免费节点, VLESS, VMess, Trojan, Reality, WARP, Clash, Sing-box, v2rayN, Shadowrocket, 网络加速, 科学上网">
+	<meta name="author" content="BCFIP">
+	<title>BCFIP 优选IP | Cloudflare BestIP</title>
+	<style>
+		:root { --bg-color:#111111; --card-bg:rgba(30,30,30,.85); --accent:#F6821F; --accent-soft:rgba(246,130,31,.14); --accent-border:rgba(246,130,31,.4); --text-main:#F6F6F7; --text-muted:#9E9E9E; --border-color:rgba(255,255,255,.12); --code-bg:rgba(255,255,255,.06); --code-text:#FFB87A; --ok:#3FB950; --stripe-a:rgba(255,255,255,.035); --stripe-b:rgba(246,130,31,.06); }
+		* { box-sizing:border-box; margin:0; padding:0; }
+		body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background-color:var(--bg-color); background-image:radial-gradient(circle at 50% 0%, rgba(246,130,31,.14) 0%, transparent 600px); background-repeat:no-repeat; color:var(--text-main); line-height:1.6; padding:50px 20px; overflow-x:hidden; }
+		.container { max-width:1080px; margin:0 auto; }
+		header { text-align:center; margin-bottom:45px; }
+		h1 { font-size:2.3rem; margin-bottom:16px; font-weight:800; letter-spacing:-.02em; background:linear-gradient(to right,#fff,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+		.tips { display:block; font-size:.9rem; color:var(--text-muted); margin-bottom:15px; }
+		h2 { font-size:1.5rem; margin:45px 0 20px; color:#fff; display:flex; align-items:center; column-gap:14px; }
+		h2::before { content:""; width:5px; height:1.3rem; background:var(--accent); border-radius:10px; box-shadow:0 0 15px var(--accent),0 0 5px rgba(246,130,31,.5); }
+		h2:first-of-type { margin-top:0; }
+		.tbl-wrap { overflow-x:auto; background-color:var(--card-bg); border:1px solid var(--border-color); border-radius:14px; box-shadow:0 8px 32px rgba(0,0,0,.35); margin-bottom:45px; }
+		table { width:100%; border-collapse:collapse; font-size:.88rem; min-width:640px; }
+		th, td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--border-color); vertical-align:middle; }
+		tr:last-child td { border-bottom:none; }
+		tbody tr:nth-child(odd) { background-color:var(--stripe-a); }
+		tbody tr:nth-child(even) { background-color:var(--stripe-b); }
+		tbody tr:hover { background-color:rgba(246,130,31,.12); }
+		th { color:var(--accent); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; background:rgba(246,130,31,.08); border-bottom:1px solid var(--accent-border); }
+		td.src { font-weight:700; color:#fff; white-space:nowrap; }
+		.tag { display:inline-flex; align-items:center; font-size:.68rem; font-weight:600; padding:1px 7px; border-radius:4px; color:var(--accent); border:1px solid var(--accent-border); background:rgba(246,130,31,.1); margin-top:4px; white-space:nowrap; }
+		.url-text { font-family:ui-monospace,SFMono-Regular,Monaco,Consolas,monospace; font-size:.82rem; color:var(--code-text); word-break:break-all; user-select:all; display:inline-block; max-width:620px; }
+		.copy-btn { background:rgba(246,130,31,.14); color:var(--accent); border:1px solid var(--accent-border); height:32px; padding:0 16px; border-radius:7px; cursor:pointer; font-size:.82rem; font-weight:700; transition:all .3s; white-space:nowrap; }
+		.copy-btn:hover { background:var(--accent); color:#fff; box-shadow:0 0 15px rgba(246,130,31,.35); }
+		.copy-btn.success { background:var(--ok); border-color:var(--ok); color:#fff; }
+		footer { text-align:center; margin-top:20px; padding-top:28px; border-top:1px solid var(--border-color); font-size:.85rem; color:var(--text-muted); }
+		footer a { color:var(--accent); text-decoration:none; }
+		footer a:hover { text-decoration:underline; }
+		@media (max-width:768px) {
+			body { padding:28px 14px; }
+			h1 { font-size:1.7rem; }
+			h2 { font-size:1.25rem; margin:35px 0 16px; }
+			.tbl-wrap { overflow-x:visible; }
+			table { min-width:0; font-size:.82rem; }
+			thead { display:none; }
+			tr { display:block; padding:12px 0; border-bottom:1px solid var(--border-color); }
+			tr:last-child { border-bottom:none; }
+			th, td { display:block; width:100% !important; border:none; padding:2px 0; }
+			td.src { font-size:1rem; white-space:normal; margin-bottom:6px; }
+			.url-text { display:block; max-width:none; font-size:.78rem; }
+			.copy-btn { width:100%; height:36px; margin-top:8px; }
+			.tag { white-space:normal; }
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>BCFIP 优选IP</h1>
+		<p class="tips">定时自动更新的优选IP列表 · 数据由 GitHub Actions 每6小时自动抓取刷新</p>
+    </header>
+
+    <h2>优选IP</h2>
+    <div class="tbl-wrap">
+        <table>
+            <thead><tr><th style="width:150px;">来源</th><th>链接</th><th style="width:110px;">操作</th></tr></thead>
+            <tbody id="t1"></tbody>
+        </table>
+    </div>
+
+    <h2>随机优选 / WARP</h2>
+    <div class="tbl-wrap">
+        <table>
+            <thead><tr><th style="width:150px;">来源</th><th>链接</th><th style="width:110px;">操作</th></tr></thead>
+            <tbody id="t2"></tbody>
+        </table>
+    </div>
+
+    <h2>SUB 优选订阅</h2>
+    <div class="tbl-wrap">
+        <table>
+            <thead><tr><th style="width:150px;">来源</th><th>链接</th><th style="width:110px;">操作</th></tr></thead>
+            <tbody id="t3"></tbody>
+        </table>
+    </div>
+
+<footer>
+        <span class="tips">本站内容均来自网络，完全免费使用，请勿用于非法用途 · 数据由 GitHub Actions 每6小时定时自动更新<br><a href="pipeline">数据管道说明</a></span>
+</footer>
+</div>
+
+<script>
+(function(){
+    window.copy = function(btn, url) {
+        var full = url;
+        if (!/^(https?:|sub:)/i.test(url)) {
+            full = location.origin + (url.charAt(0) === '/' ? '' : '/') + url;
+        }
+        var done = function(){ btn.classList.remove('success'); btn.textContent = '复制链接'; };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(full).then(function(){
+                btn.classList.add('success'); btn.textContent = '复制成功';
+                setTimeout(done, 1500);
+            }, function(){ fallback(); });
+        } else {
+            fallback();
+        }
+        function fallback(){
+            var ta = document.createElement('textarea');
+            ta.value = full; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); btn.classList.add('success'); btn.textContent = '复制成功'; }
+            catch(e) { prompt('复制链接', full); }
+            document.body.removeChild(ta); setTimeout(done, 1500);
+        }
+    };
+})();
+
+var DATA = [
+  { id:'t1', rows:[
+    ['WeTest', [['wetest/ipv4.txt','每半小时更新 · 分三网']]],
+    ['UOUIN', [['uouin/all.txt','每半小时更新 · 三网带测速']]],
+    ['LuoLi', [['luoli/all.txt','每6小时更新']]],
+    ['CM 1', [['cmliu/all.txt','每6小时更新']]],
+    ['CM 2', [['cmliu2/all.txt','每6小时更新 · 镜像参考站']]],
+    ['Mia', [['xinyitang3/ipv4.txt','每6小时更新 · 镜像参考站']]],
+    ['Laziji', [['lzj/all.txt','每6小时更新']]],
+    ['MoistR', [['moistr/all.txt','每6小时更新']]],
+    ['Kristi', [['kristi/all.txt','每6小时更新']]],
+    ['YuTian', [['yutian/all.txt','每6小时更新']]],
+    ['CFYes', [['cfyes/ipv4.txt','IPv4 · 每半小时更新'],['cfyes/ipv6.txt','IPv6'],['https://addressesapi.090227.xyz/CloudFlareYes','备用 · CM API']]],
+    ['天诚 1', [['tiancheng/all.txt','多地区全量版 · 每6小时更新'],['tiancheng/mini.txt','多地区迷你版'],['tiancheng/hk.txt','中国香港 HK'],['tiancheng/sg.txt','新加坡 SG'],['tiancheng/jp.txt','日本 JP'],['tiancheng/kr.txt','韩国 KR'],['tiancheng/us.txt','美国 US']]],
+    ['天诚 3', [['tiancheng3/all.txt','多地区全量版 · 每6小时更新'],['tiancheng3/mini.txt','多地区迷你版']]],
+    ['S5公益', [['s5gy/all.txt','多地区全量版 · 每日更新'],['s5gy/mini.txt','多地区迷你版'],['s5gy/hk.txt','中国香港 HK'],['s5gy/sg.txt','新加坡 SG'],['s5gy/jp.txt','日本 JP'],['s5gy/us.txt','美国 US']]],
+    ['VPS789', [['vps789/top100.txt','优选域名 TOP100 · 每6小时更新'],['vps789/top50.txt','TOP50'],['vps789/top20.txt','TOP20'],['vps789/top10.txt','TOP10'],['vps789/top100-8443.txt','8443 · TOP100'],['vps789/top50-8443.txt','8443 · TOP50'],['vps789/top20-8443.txt','8443 · TOP20'],['vps789/top10-8443.txt','8443 · TOP10']]],
+    ['Gslege', [['gslege/Cfxyz.txt','带测速 · 每6小时更新'],['gslege/SG.txt','新加坡 SG'],['gslege/DE.txt','德国 DE'],['gslege/US.txt','美国 US']]],
+    ['vvHan', [['vvhan/ipv4.txt','IPv4 · 每半小时更新'],['vvhan/ipv6.txt','IPv6']]],
+    ['NiREvil', [['nirevil/ipv4.txt','IPv4 · 每天下午更新'],['nirevil/ipv6.txt','IPv6']]],
+    ['MJZ', [['https://cf.junzhen.qzz.io/best_ips.txt','联通 · 每45分钟更新'],['https://cf.junzhen.qzz.io/best_ips_bj.txt','电信 · 每45分钟更新']]],
+    ['SS', [['https://raw.githubusercontent.com/svip-s/cloudflare_ip/refs/heads/main/best_ips.txt','移动 · 下午更新']]],
+    ['LZ', [['https://raw.githubusercontent.com/love-ztm/cfip/refs/heads/main/best_ips.txt','电信 · 每2小时更新'],['https://raw.githubusercontent.com/love-ztm/cfip/refs/heads/main/ubest_ips.txt','联通 · 每2小时更新']]],
+    ['ZhiXuan', [['zhixuanwang/ipv4-onlyip.txt','IPv4 · 每小时更新'],['https://addressesapi.090227.xyz/ip.164746.xyz','备用']]],
+    ['MingYu', [['https://raw.githubusercontent.com/ymyuuu/IPDB/refs/heads/main/BestCF/bestcfv4.txt','IPv4 · 每小时更新'],['https://raw.githubusercontent.com/ymyuuu/IPDB/refs/heads/main/BestCF/bestcfv6.txt','IPv6']]],
+    ['Joname', [['https://raw.githubusercontent.com/joname1/BestCFip/refs/heads/main/ipv4.txt','IPv4 · 每4小时更新 · 采集聚合'],['https://raw.githubusercontent.com/joname1/BestCFip/refs/heads/main/ipv6.txt','IPv6']]],
+    ['IRCF', [['ircf/ipv4.txt','每4小时更新']]],
+    ['LancelotRar', [['https://raw.githubusercontent.com/LancelotRar/best-cf-ips/refs/heads/main/best-cf-ipv4.txt','每3小时更新']]],
+    ['Senflare', [['https://raw.githubusercontent.com/Senflare/Senflare-IP/refs/heads/main/IPlist-Pro.txt','单IP · 每3小时更新'],['https://raw.githubusercontent.com/Senflare/Senflare-IP/refs/heads/main/Senflare-Pro.txt','带备注']]],
+    ['JieChaoCC', [['https://raw.githubusercontent.com/JieChaoCC/cf-ip-auto/refs/heads/main/data/ipapi.txt','每2小时更新']]],
+    ['Ahang', [['https://raw.githubusercontent.com/ahang39/router/refs/heads/main/all.txt','每日更新']]],
+    ['Einsitang', [['https://raw.githubusercontent.com/einsitang/my-fast-cf-ip/refs/heads/master/fastips.txt','每小时更新 · 单IP']]],
+    ['Hubbylei', [['https://raw.githubusercontent.com/hubbylei/bestcf/refs/heads/main/bestcf.txt','每小时更新 · 单IP']]],
+    ['CM 3', [['https://raw.githubusercontent.com/cmliu/WorkerVless2sub/refs/heads/main/addressesapi.txt','每日更新']]],
+    ['天诚 4', [['https://raw.githubusercontent.com/gshtwy/CF-DNS-Clone/refs/heads/main/wetest-cloudflare-v4.txt','每2小时更新']]],
+    ['Endpoint IP', [['entryip/50.txt','新手勿用']]],
+    ['Fiatnorm', [['https://raw.githubusercontent.com/Fiatnorm/OptiDomain-Pages/refs/heads/main/optimized_cf_ips.txt','每日更新']]]
+  ]},
+  { id:'t2', rows:[
+    ['EDT/WARP', [['https://warp-masque-bestip.pages.dev/?ips=50&level=all&port=random','通用段合集'],['https://warp-masque-bestip.pages.dev/?ips=50&level=p0&port=random','核心段合集'],['WARP/WARP-MINI-443.txt','迷你版'],['https://warp-masque-bestip.pages.dev/?ips=50&level=198&port=random','新版One MASQUE 主段'],['https://warp-masque-bestip.pages.dev/?ips=50&level=197&port=random','Gateway MASQUE 主段'],['https://warp-masque-bestip.pages.dev/?ips=50&level=193&port=random','Gateway WireGuard 主段'],['https://warp-masque-bestip.pages.dev/?ips=50&level=192&port=random','旧版WARP 主段']]],
+    ['按运营商', [['https://090227.pages.dev/bestcf?isp=all&ips=20','三网'],['https://090227.pages.dev/bestcf?isp=ct&ips=50','电信'],['https://090227.pages.dev/bestcf?isp=cu&ips=50','联通'],['https://090227.pages.dev/bestcf?isp=cmcc&ips=50','移动']]],
+    ['按网段', [['https://randomip.pages.dev/?c=all&n=50&p=random','合集'],['https://randomip.pages.dev/?c=104.16.0.0/12&n=50&p=random','104.16.0.0/12 · 常用'],['https://randomip.pages.dev/?c=188.114.96.0/22&n=50&p=random','188.114.96.0/22 · 常用'],['https://randomip.pages.dev/?c=162.159.38.0/24&n=50&p=443','部分亚洲'],['https://randomip.pages.dev/?c=162.159.46.0/24&n=50&p=443','部分亚洲'],['https://randomip.pages.dev/?c=162.158.0.0/15&n=50&p=random','部分亚洲'],['https://randomip.pages.dev/?c=172.64.0.0/13&n=50&p=random','部分亚洲'],['https://randomip.pages.dev/?c=103.21.244.0/24&n=50&p=random','部分亚洲'],['https://randomip.pages.dev/?c=27.50.48.0/24&n=50&p=random','部分亚洲'],['https://randomip.pages.dev/?c=162.159.48.0/22&n=50&p=random','部分亚洲'],['https://randomip.pages.dev/?c=198.41.208.0/23&n=50&p=random','部分亚洲']]],
+    ['地区随机', [['random-region/mix.txt','每个地区随机5个IP'],['random-region/mix2.txt','每个地区随机10个IP']]]
+  ]},
+  { id:'t3', rows:[
+    ['CM', [['sub://sub.cmliussss.net#CM','']]],
+    ['天诚1', [['sub://vl.cm.soso.edu.kg#天诚1','']]],
+    ['Moist_R', [['sub://owo.o00o.ooo#Moist_R','']]],
+    ['洛璃', [['sub://loli.sub.us.ci#洛璃','']]],
+    ['辣子鸡', [['sub://sub.lzjbaby.com#辣子鸡','']]],
+    ['辣椒炒肉少放辣', [['sub://sub.xdu.qzz.io#辣椒炒肉少放辣','']]],
+    ['S5公益', [['sub://sub.995677.xyz#S5公益','']]],
+    ['青云志', [['sub://sub.ais.sld.tw#青云志','']]],
+    ['老王', [['sub://sub.eooce.xx.kg#老王','']]],
+    ['文烨', [['sub://sub.keaeye.icu#文烨','']]],
+    ['Kristi', [['sub://sub.mot.cloudns.biz#Kristi','']]],
+    ['周润发', [['sub://zrf.zrf.me#周润发','']]],
+    ['DanFeng', [['sub://sub.danfeng.eu.org#DanFeng','']]]
+  ]}
+];
+
+DATA.forEach(function(sec){
+  var tb = document.getElementById(sec.id);
+  sec.rows.forEach(function(r){
+    var links = r[1], n = links.length;
+    for (var i = 0; i < n; i++) {
+      var tr = document.createElement('tr');
+      var src = i === 0 ? '<td class="src" rowspan="' + n + '">' + r[0] + '</td>' : '';
+      var tag = links[i][1] ? '<span class="tag">' + links[i][1] + '</span>' : '';
+      tr.innerHTML = src + '<td><span class="url-text">' + links[i][0] + '</span></td>' +
+        '<td><button class="copy-btn" onclick="copy(this,\'' + links[i][0].replace(/'/g,"\\'") + '\')">复制链接</button></td>';
+      tb.appendChild(tr);
+    }
+  });
+});
+</script>
+</body>
+</html>

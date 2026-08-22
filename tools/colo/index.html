@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Colo 二字码和三字码查询</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #3b82f6;
+            --text-main: #f1f5f9;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --search-bg: #1e293b;
+            --tag-common: #1d4ed8; /* 常用标签的深蓝色 */
+        }
+
+        /* 洲标签颜色配置 */
+        .tag-asia { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .tag-northamerica { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .tag-europe { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .tag-oceania { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+        .tag-africa { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px 100px;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2rem; margin-bottom: 24px; color: var(--text-main); font-weight: 700; }
+
+        .search-wrapper { position: relative; max-width: 600px; margin: 0 auto 50px; }
+        .search-input {
+            width: 100%; padding: 14px 50px 14px 20px; font-size: 1.1rem;
+            background-color: var(--search-bg); border: 2px solid var(--border-color);
+            border-radius: 30px; color: var(--text-main); outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-input:focus { border-color: var(--accent-blue); }
+
+        .clear-btn {
+            position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 1.5rem; display: none;
+        }
+
+        .list-container { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .data-row {
+            background-color: var(--card-bg); padding: 12px 20px;
+            border-radius: 8px; cursor: pointer; transition: background 0.2s;
+            display: flex; align-items: center;
+        }
+        .data-row:hover { background-color: #2d3a4f; }
+        
+        .continent-tag {
+            font-size: 0.8rem; padding: 2px 10px;
+            border-radius: 4px; margin-right: 15px; font-weight: bold;
+            min-width: 65px; text-align: center; flex-shrink: 0;
+        }
+
+        .main-text { flex-grow: 1; }
+
+        /* 常用标签样式 */
+        .common-tag {
+            font-size: 0.75rem; background: var(--tag-common); color: white;
+            padding: 2px 8px; border-radius: 4px; margin-left: 10px;
+            font-weight: bold; flex-shrink: 0; opacity: 0.9;
+        }
+
+        .no-results { text-align: center; padding: 40px; color: var(--text-muted); display: none; }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-blue);
+            color: white;
+            padding: 10px 24px;       /* 稍微增加内边距 */
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            
+            /* --- 核心修复代码 --- */
+            white-space: nowrap;      /* 强制不换行 */
+            width: max-content;       /* 宽度根据内容自适应 */
+            max-width: 90vw;          /* 最大宽度不超过屏幕宽度的 90% */
+            overflow: hidden;         /* 万一超出了就隐藏 */
+            text-overflow: ellipsis;  /* 超出部分显示省略号 */
+        }
+
+        footer {
+            position: fixed; bottom: 30px; left: 0; width: 100%;
+            display: flex; justify-content: center; z-index: 999;
+        }
+        .ad-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white; padding: 12px 28px; border-radius: 50px;
+            text-decoration: none; font-weight: bold; font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .ad-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); }
+
+        @media (max-width: 640px) { 
+            h1 { font-size: 1.5rem; } 
+            .data-row { font-size: 0.85rem; padding: 12px 10px; }
+            .continent-tag { margin-right: 8px; min-width: 50px; padding: 2px 4px; font-size: 0.75rem;}
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast">已复制</div>
+
+<div class="container">
+    <header>
+        <h1>Cloudflare Colo 查询</h1>
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索地区、国家、三字码或二字码" autocomplete="off">
+            <button id="clearBtn" class="clear-btn">&times;</button>
+        </div>
+    </header>
+
+    <div id="mainContent" class="list-container"></div>
+    <div id="noResults" class="no-results">未找到相关结果</div>
+</div>
+
+<footer>
+    <a href="https://www.youtube.com/@zhenxiangdinglv" class="ad-button" target="_blank">YouTube @真香定律</a>
+</footer>
+
+<script>
+    const continentClasses = {
+        "亚洲": "tag-asia", "北美洲": "tag-northamerica", "欧洲": "tag-europe", "大洋洲": "tag-oceania", "非洲": "tag-africa"
+    };
+
+    // 容易优选出高性能IP的常见三字码列表
+    const commonColos = [
+        "HKG", "SIN", "SJC", "LAX", "NRT", "KIX", "ICN", "SEA", "FRA", "LHR", "TPE", "AMS", "CDG", "MAD"
+    ];
+
+    const rawData = {
+        "亚洲": ["香港, 中国 - HKG, HK", "新加坡, 新加坡 - SIN, SG", "东京, 日本 - NRT, JP", "大阪, 日本 - KIX, JP", "首尔, 韩国 - ICN, KR", "台北, 中国台湾 - TPE, TW", "高雄, 中国台湾 - KHH, TW", "澳门, 中国 - MFM, MO", "广州, 中国 - CAN, CN", "深圳, 中国 - SZX, CN", "上海, 中国 - SHA, CN", "廊坊, 中国 - PKX, CN", "郑州, 中国 - CGO, CN", "北京, 中国 - BJS, CN", "曼谷, 泰国 - BKK, TH", "胡志明市, 越南 - SGN, VN", "河内, 越南 - HAN, VN", "马尼拉, 菲律宾 - MNL, PH", "雅加达, 印度尼西亚 - CGK, ID", "吉隆坡, 马来西亚 - KUL, MY", "孟买, 印度 - BOM, IN", "新德里, 印度 - DEL, IN", "钦奈, 印度 - MAA, IN", "班加罗尔, 印度 - BLR, IN", "海德拉巴, 印度 - HYD, IN", "加尔各答, 印度 - CCU, IN", "艾哈迈达巴德, 印度 - AMD, IN", "昌迪加尔, 印度 - IXC, IN", "阿拉木图, 哈萨克斯坦 - ALA, KZ", "斯里巴加湾市, 文莱 - BWN, BN", "宿务, 菲律宾 - CEB, PH", "常德, 中国 - CGD, CN", "吉大港, 孟加拉国 - CGP, BD", "科伦坡, 斯里兰卡 - CMB, LK", "达卡, 孟加拉国 - DAC, BD", "佛山, 中国 - FUO, CN", "福冈, 日本 - FUK, JP", "福州, 中国 - FOC, CN", "海口, 中国 - HAK, CN", "衡水, 中国 - SJW, CN", "伊斯兰堡, 巴基斯坦 - ISB, PK", "济南, 中国 - TNA, CN", "新山, 马来西亚 - JHB, MY", "坎普尔, 印度 - KNU, IN", "卡拉奇, 巴基斯坦 - KHI, PK", "加德满都, 尼泊尔 - KTM, NP", "克拉斯诺亚尔斯克, 俄罗斯 - KJA, RU", "马累, 马尔代夫 - MLE, MV", "那格浦尔, 印度 - NAG, IN", "那霸, 日本 - OKA, JP", "巴特那, 印度 - PAT, IN", "金边, 柬埔寨 - PNH, KH", "青岛, 中国 - TAO, CN", "素叻他尼, 泰国 - URT, TH", "乌兰巴托, 蒙古 - ULN, MN", "万象, 老挝 - VTE, LA", "新余, 中国 - KHN, CN", "埃里温, 亚美尼亚 - EVN, AM", "日惹, 印度尼西亚 - JOG, ID", "卡加延德奥罗, 菲律宾 - CGY, PH", "科钦, 印度 - COK, IN", "登巴萨, 印度尼西亚 - DPS, ID", "坎努尔, 印度 - CNN, IN", "贵阳, 中国 - KWE, CN", "绍兴, 中国 - HGH, CN", "常州, 中国 - CZX, CN", "昆明, 中国 - KMG, CN", "清迈, 泰国 - CNX, TH", "阳泉, 中国 - TYN, CN", "长沙, 中国 - CSX, CN", "大连, 中国 - DLC, CN", "北海, 中国 - BHY, CN", "重庆, 中国 - CKG, CN", "襄阳, 中国 - XFN, CN", "岘港, 越南 - DAD, VN", "嘉兴, 中国 - JXG, CN", "丹辘市, 菲律宾 - CRK, PH", "廷布, 不丹 - PBH, BT", "西安, 中国 - XIY, CN", "阿斯塔纳, 哈萨克斯坦 - NQZ, KZ", "淄博, 中国 - TNA, CN", "古晋, 马来西亚 - KCH, MY", "阿克托别, 哈萨克斯坦 - AKX, KZ", "澄迈, 中国 - HAK, CN", "南昌, 中国 - KHN, CN", "铜仁, 中国 - TEN, CN", "泰州, 中国 - HYN, CN", "石家庄, 中国 - SJW, CN", "比什凯克, 吉尔吉斯斯坦 - FRU, KG", "玛琅, 印度尼西亚 - MLG, ID", "拉合尔, 巴基斯坦 - LHE, PK", "成都, 中国 - CTU, CN", "阿格拉, 印度 - AGR, IN", "哥印拜陀, 印度 - CJB, IN", "兴义, 中国 - ACX, CN", "布巴内斯瓦尔, 印度 - BBI, IN", "洛阳, 中国 - LYA, CN"],
+        "北美洲": ["圣何塞, 美国 - SJC, US", "洛杉矶, 美国 - LAX, US", "西雅图, 美国 - SEA, US", "阿什本, 美国 - IAD, US", "亚特兰大, 美国 - ATL, US", "波士顿, 美国 - BOS, US", "芝加哥, 美国 - ORD, US", "达拉斯, 美国 - DFW, US", "丹佛, 美国 - DEN, US", "迈阿密, 美国 - MIA, US", "多伦多, 加拿大 - YYZ, CA", "温哥华, 加拿大 - YVR, CA"],
+        "欧洲": ["法兰克福, 德国 - FRA, DE", "伦敦, 英国 - LHR, GB", "阿姆斯特丹, 荷兰 - AMS, NL", "巴黎, 法国 - CDG, FR", "马德里, 西班牙 - MAD, ES", "米兰, 意大利 - MXP, IT", "雅典, 希腊 - ATH, GR", "巴塞罗那, 西班牙 - BCN, ES", "贝尔格莱德, 塞尔维亚 - BEG, RS", "柏林, 德国 - TXL, DE", "波尔多, 法国 - BOD, FR", "布拉迪斯拉发, 斯洛伐克 - BTS, SK", "布鲁塞尔, 比利时 - BRU, BE", "布加勒斯特, 罗马尼亚 - OTP, RO", "布达佩斯, 匈牙利 - BUD, HU", "基希讷乌, 摩尔多瓦 - KIV, MD", "哥本哈根, 丹麦 - CPH, DK", "都柏林, 爱尔兰 - DUB, IE", "杜塞尔多夫, 德国 - DUS, DE", "日内瓦, 瑞士 - GVA, CH", "哥德堡, 瑞典 - GOT, SE", "汉堡, 德国 - HAM, DE", "赫尔辛基, 芬兰 - HEL, FI", "伊斯坦布尔, 土耳其 - IST, TR", "伊兹密尔, 土耳其 - ADB, TR", "基辅, 乌克兰 - KBP, UA", "里斯本, 葡萄牙 - LIS, PT", "卢森堡城, 卢森堡 - LUX, LU", "里昂, 法国 - LYS, FR", "曼彻斯特, 英国 - MAN, GB", "马赛, 法国 - MRS, FR", "明斯克, 白俄罗斯 - MSQ, BY", "莫斯科, 俄罗斯 - DME, RU", "慕尼黑, 德国 - MUC, DE", "尼科西亚, 塞浦路斯 - LCA, CY", "奥斯陆, 挪威 - OSL, NO", "巴勒莫, 意大利 - PMO, IT", "布拉格, 捷克 - PRG, CZ", "雷克雅未克, 冰岛 - KEF, IS", "里加, 拉脱维亚 - RIX, LV", "罗马, 意大利 - FCO, IT", "圣彼得堡, 俄罗斯 - LED, RU", "圣韦内拉, 马耳他 - MLA, MT", "斯科普里, 北马其顿 - MK, SKP", "索非亚, 保加利亚 - SOF, BG", "斯德哥尔摩, 瑞典 - ARN, SE", "斯图加特, 德国 - STR, DE", "塔林, 爱沙尼亚 - TLL, EE", "第比利斯, 格鲁吉亚 - TBS, GE", "塞萨洛尼基, 希腊 - SKG, GR", "地拉那, 阿尔巴尼亚 - TIA, AL", "维也纳, 奥地利 - VIE, AT", "维尔纽斯, 立陶宛 - VNO, LT", "华沙, 波兰 - WAW, PL", "弗罗茨瓦夫, 波兰 - WRO, PL", "萨格勒布, 克罗地亚 - ZAG, HR", "苏黎世, 瑞士 - ZRH, CH"],
+        "大洋洲": ["悉尼, 澳大利亚 - SYD, AU", "墨尔本, 澳大利亚 - MEL, AU", "奥克兰, 新西兰 - AKL, NZ", "珀斯, 澳大利亚 - PER, AU"],
+        "非洲": ["开普敦, 南非 - CPT, ZA", "约翰内斯堡, 南非 - JNB, ZA", "阿克拉, 加纳 - ACC, GH", "阿尔及尔, 阿尔及利亚 - ALG, DZ", "安纳巴, 阿尔及利亚 - AAE, DZ", "塔那那利佛, 马达加斯加 - TNR, MG", "达喀尔, 塞内加尔 - DKR, SN", "达累斯萨拉姆, 坦桑尼亚 - DAR, TZ", "吉布提市, 吉布提 - JIB, DJ", "德班, 南非 - DUR, ZA", "哈博罗内, 博茨瓦纳 - GBE, BW", "哈拉雷, 津巴布韦 - HRE, ZW", "基加利, 卢旺达 - KGL, RW", "拉各斯, 尼日利亚 - LOS, NG", "罗安达, 安哥拉 - LAD, AO", "马普托, 莫桑比克 - MPM, MZ", "蒙巴萨, 肯尼亚 - MBA, KE", "内罗毕, 肯尼亚 - NBO, KE", "奥兰, 阿尔及利亚 - ORN, DZ", "瓦加杜古, 布基纳法索 - OUA, BF", "路易港, 毛里求斯 - MRU, MU", "突尼斯市, 突尼斯 - TUN, TN", "金沙萨, 刚果民主共和国 - FIH, CD", "开罗, 埃及 - CAI, EG", "温得和克, 纳米比亚 - WDH, NA", "亚穆苏克罗, 科特迪瓦 - ASK, CI", "阿比让, 科特迪瓦 - ABJ, CI", "坎帕拉, 乌干达 - EBB, UG", "圣但尼, 留尼汪 - RUN, RE", "卢萨卡, 赞比亚 - LUN, ZM", "亚的斯亚贝巴, 埃塞俄比亚 - ADD, ET", "利隆圭, 马拉维 - LLW, MW", "君士坦丁, 阿尔及利亚 - CZL, DZ"]
+    };
+
+    const searchInput = document.getElementById('searchInput');
+    const mainContent = document.getElementById('mainContent');
+    const toast = document.getElementById('toast');
+
+    let toastTimer = null;
+
+    function showToast(text) {
+        toast.innerText = `已复制 ${text}`;
+        toast.style.display = 'block';
+
+        if (toastTimer) {
+            clearTimeout(toastTimer);
+        }
+
+        toastTimer = setTimeout(() => {
+            toast.style.display = 'none';
+            toastTimer = null; // 执行完后清空记录
+        }, 1500);
+    }
+
+    function handleCopy(item) {
+        navigator.clipboard.writeText(item).then(() => showToast(item));
+    }
+
+    function render(filter = '') {
+        mainContent.innerHTML = '';
+        const lowerFilter = filter.toLowerCase().trim();
+        let found = false;
+
+        for (const [continent, items] of Object.entries(rawData)) {
+            items.forEach(item => {
+                if (item.toLowerCase().includes(lowerFilter)) {
+                    found = true;
+                    // 判断常用：三字码在格式 "XXX, XX" 的逗号前面
+                    const codesPart = item.split(' - ').pop().trim();
+                    const threeLetterCode = codesPart.split(',')[0].trim();
+                    const isCommon = commonColos.includes(threeLetterCode);
+                    
+                    const row = document.createElement('div');
+                    row.className = 'data-row';
+                    const tagClass = continentClasses[continent] || '';
+                    
+                    row.innerHTML = `
+                        <span class="continent-tag ${tagClass}">${continent}</span>
+                        <span class="main-text">${item}</span>
+                        ${isCommon ? '<span class="common-tag">常用</span>' : ''}
+                    `;
+                    
+                    row.onclick = () => handleCopy(item);
+                    mainContent.appendChild(row);
+                }
+            });
+        }
+        document.getElementById('noResults').style.display = found ? 'none' : 'block';
+    }
+
+    searchInput.oninput = (e) => {
+        document.getElementById('clearBtn').style.display = e.target.value ? 'block' : 'none';
+        render(e.target.value);
+    };
+
+    document.getElementById('clearBtn').onclick = () => {
+        searchInput.value = '';
+        document.getElementById('clearBtn').style.display = 'none';
+        render();
+        searchInput.focus();
+    };
+
+    render();
+</script>
+</body>
+</html>
