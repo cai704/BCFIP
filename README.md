@@ -1,6 +1,6 @@
 # BCFIP 优选IP
 
-在线地址：https://bcfip.pages.dev
+在线地址：https://bcfip.19870222.xyz/
 
 ## 项目简介
 
@@ -11,7 +11,7 @@
 - 优选 IP txt 订阅，统一格式 `IP:端口#来源 | 归属地 | IPv4/IPv6 | 运营商`
 - 多个来源的优选 IP 列表：CFYes、vvHan、WeTest、UOUIN、LuoLi、CM 1/2、Mia、天诚 1/3、S5公益、Gslege、NiREvil、VPS789 优选域名等
 - 按地区 / 运营商 / 网段随机优选、SUB 订阅合集、EDT/WARP 相关链接
-- 数据管道说明页：https://bcfip.pages.dev/pipeline
+- 数据管道说明页：https://bcfip.19870222.xyz/pipeline
 
 ## 数据格式
 
@@ -80,6 +80,7 @@ BestCF-IP/
    - Build command：留空
    - Build output directory：留空（或 `/`）
 4. 保存后首次自动部署，页面和订阅链接立即可用。
+5. **绑定自定义域名**：Cloudflare 控制台 → Pages → bcfip → Custom domains → 输入 `bcfip.19870222.xyz` 并按提示添加 DNS 解析记录，生效后访问 https://bcfip.19870222.xyz/ 即可。
 
 ## 定时更新说明
 
