@@ -1,22 +1,22 @@
-162.159.198.1:443#VPS789优选域名 TOP20 | 08-29 06:36
-cfsaas.080112.xyz:443#VPS789优选 | cfsaas.080112.xyz
-3.cf.3666888.xyz:443#VPS789优选 | 3.cf.3666888.xyz
+162.159.198.1:443#VPS789优选域名 TOP20 | 08-29 15:20
 cf.neko.cloudflaree.eu.org:443#VPS789优选 | cf.neko.cloudflaree.eu.org
-staticdelivery.nexusmods.com:443#VPS789优选 | staticdelivery.nexusmods.com
-cf.3666888.xyz:443#VPS789优选 | cf.3666888.xyz
-thebeat.gehealthcare.com:443#VPS789优选 | thebeat.gehealthcare.com
-www.jimdo.com:443#VPS789优选 | www.jimdo.com
-cfvip.cf.3666888.xyz:443#VPS789优选 | cfvip.cf.3666888.xyz
-avido.cf.3666888.xyz:443#VPS789优选 | avido.cf.3666888.xyz
-yg5.ygkkk.dpdns.org:443#VPS789优选 | yg5.ygkkk.dpdns.org
-www.broadcom.com:443#VPS789优选 | www.broadcom.com
-www.dg22.top:443#VPS789优选 | www.dg22.top
-www.akasantech.com:443#VPS789优选 | www.akasantech.com
+cfsaas.080112.xyz:443#VPS789优选 | cfsaas.080112.xyz
 cf.neko.cloudd.eu.org:443#VPS789优选 | cf.neko.cloudd.eu.org
-www.090902.xyz:443#VPS789优选 | www.090902.xyz
-cf-cname.xingpingcn.top:443#VPS789优选 | cf-cname.xingpingcn.top
-openai.com:443#VPS789优选 | openai.com
+neko.cloudd.eu.org:443#VPS789优选 | neko.cloudd.eu.org
 www.5199dy.com:443#VPS789优选 | www.5199dy.com
 store.ubi.com:443#VPS789优选 | store.ubi.com
-linear.app:443#VPS789优选 | linear.app
+thebeat.gehealthcare.com:443#VPS789优选 | thebeat.gehealthcare.com
+www.sage.com:443#VPS789优选 | www.sage.com
+cfvip.cf.3666888.xyz:443#VPS789优选 | cfvip.cf.3666888.xyz
+cdn.555586.xyz:443#VPS789优选 | cdn.555586.xyz
+3.cf.3666888.xyz:443#VPS789优选 | 3.cf.3666888.xyz
+china-telecom.cname.cloudflare.468123.xyz:443#VPS789优选 | china-telecom.cname.cloudflare.468123.xyz
+www.akasantech.com:443#VPS789优选 | www.akasantech.com
+www.ntu.edu.sg:443#VPS789优选 | www.ntu.edu.sg
+openai.com:443#VPS789优选 | openai.com
+www.dentoncounty.gov:443#VPS789优选 | www.dentoncounty.gov
+m.iyf.tv:443#VPS789优选 | m.iyf.tv
+keji.cf.3666888.xyz:443#VPS789优选 | keji.cf.3666888.xyz
+sanwang.cf.3666888.xyz:443#VPS789优选 | sanwang.cf.3666888.xyz
+cf.cf.3666888.xyz:443#VPS789优选 | cf.cf.3666888.xyz
 162.159.197.1:443#VPS789优选域名
