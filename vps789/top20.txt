@@ -1,22 +1,22 @@
-162.159.198.1:443#VPS789优选域名 TOP20 | 08-29 15:20
-cf.neko.cloudflaree.eu.org:443#VPS789优选 | cf.neko.cloudflaree.eu.org
-cfsaas.080112.xyz:443#VPS789优选 | cfsaas.080112.xyz
+162.159.198.1:443#VPS789优选域名 TOP20 | 08-30 00:51
 cf.neko.cloudd.eu.org:443#VPS789优选 | cf.neko.cloudd.eu.org
 neko.cloudd.eu.org:443#VPS789优选 | neko.cloudd.eu.org
-www.5199dy.com:443#VPS789优选 | www.5199dy.com
-store.ubi.com:443#VPS789优选 | store.ubi.com
-thebeat.gehealthcare.com:443#VPS789优选 | thebeat.gehealthcare.com
+cfsaas.080112.xyz:443#VPS789优选 | cfsaas.080112.xyz
+cf.neko.cloudflaree.eu.org:443#VPS789优选 | cf.neko.cloudflaree.eu.org
+neko.cloudflaree.eu.org:443#VPS789优选 | neko.cloudflaree.eu.org
+openai.com:443#VPS789优选 | openai.com
 www.sage.com:443#VPS789优选 | www.sage.com
 cfvip.cf.3666888.xyz:443#VPS789优选 | cfvip.cf.3666888.xyz
-cdn.555586.xyz:443#VPS789优选 | cdn.555586.xyz
-3.cf.3666888.xyz:443#VPS789优选 | 3.cf.3666888.xyz
-china-telecom.cname.cloudflare.468123.xyz:443#VPS789优选 | china-telecom.cname.cloudflare.468123.xyz
-www.akasantech.com:443#VPS789优选 | www.akasantech.com
+2.cf.3666888.xyz:443#VPS789优选 | 2.cf.3666888.xyz
+uac.cf.3666888.xyz:443#VPS789优选 | uac.cf.3666888.xyz
+4.cf.3666888.xyz:443#VPS789优选 | 4.cf.3666888.xyz
+8.cf.3666888.xyz:443#VPS789优选 | 8.cf.3666888.xyz
+ctsg.cfyx.aliyun.20237737.xyz:443#VPS789优选 | ctsg.cfyx.aliyun.20237737.xyz
+play.mc.js.cool:443#VPS789优选 | play.mc.js.cool
 www.ntu.edu.sg:443#VPS789优选 | www.ntu.edu.sg
-openai.com:443#VPS789优选 | openai.com
-www.dentoncounty.gov:443#VPS789优选 | www.dentoncounty.gov
-m.iyf.tv:443#VPS789优选 | m.iyf.tv
-keji.cf.3666888.xyz:443#VPS789优选 | keji.cf.3666888.xyz
-sanwang.cf.3666888.xyz:443#VPS789优选 | sanwang.cf.3666888.xyz
-cf.cf.3666888.xyz:443#VPS789优选 | cf.cf.3666888.xyz
+cloudflare-ip.mofashi.ltd:443#VPS789优选 | cloudflare-ip.mofashi.ltd
+www.shopify.com:443#VPS789优选 | www.shopify.com
+www.udacity.com:443#VPS789优选 | www.udacity.com
+linear.app:443#VPS789优选 | linear.app
+gh-proxy.com:443#VPS789优选 | gh-proxy.com
 162.159.197.1:443#VPS789优选域名
