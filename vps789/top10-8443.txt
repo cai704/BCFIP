@@ -1,12 +1,12 @@
-162.159.198.1:8443#VPS789优选域名 TOP10 | 09-01 07:00
-cdns.doon.eu.org:8443#VPS789优选 | cdns.doon.eu.org
-gh-proxy.com:8443#VPS789优选 | gh-proxy.com
-thebeat.gehealthcare.com:8443#VPS789优选 | thebeat.gehealthcare.com
-sanwang.cf.3666888.xyz:8443#VPS789优选 | sanwang.cf.3666888.xyz
+162.159.198.1:8443#VPS789优选域名 TOP10 | 09-01 13:36
+staticdelivery.nexusmods.com:8443#VPS789优选 | staticdelivery.nexusmods.com
 hk.cf.3666888.xyz:8443#VPS789优选 | hk.cf.3666888.xyz
-cf1s.cf.3666888.xyz:8443#VPS789优选 | cf1s.cf.3666888.xyz
 11.cf.3666888.xyz:8443#VPS789优选 | 11.cf.3666888.xyz
-cmcc.cc.cd:8443#VPS789优选 | cmcc.cc.cd
 coke.cf.3666888.xyz:8443#VPS789优选 | coke.cf.3666888.xyz
-cf-cname.xingpingcn.top:8443#VPS789优选 | cf-cname.xingpingcn.top
+cdns.doon.eu.org:8443#VPS789优选 | cdns.doon.eu.org
+www.shopify.com:8443#VPS789优选 | www.shopify.com
+www.udacity.com:8443#VPS789优选 | www.udacity.com
+cfsaas.080112.xyz:8443#VPS789优选 | cfsaas.080112.xyz
+store.ubi.com:8443#VPS789优选 | store.ubi.com
+p.etime.vip:8443#VPS789优选 | p.etime.vip
 162.159.197.1:8443#VPS789优选域名
