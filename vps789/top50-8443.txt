@@ -1,4 +1,4 @@
-162.159.198.1:8443#VPS789优选域名 TOP50 | 09-07 04:47
+162.159.198.1:8443#VPS789优选域名 TOP50 | 09-07 13:11
 hfqek.cf.3666888.xyz:8443#VPS789优选 | hfqek.cf.3666888.xyz
 4.cf.3666888.xyz:8443#VPS789优选 | 4.cf.3666888.xyz
 cdns.doon.eu.org:8443#VPS789优选 | cdns.doon.eu.org
@@ -30,7 +30,9 @@ www.bangbenjiaju.com:8443#VPS789优选 | www.bangbenjiaju.com
 www.vastnovel.com:8443#VPS789优选 | www.vastnovel.com
 prompt.gzcrtw.com:8443#VPS789优选 | prompt.gzcrtw.com
 prizepicks.com:8443#VPS789优选 | prizepicks.com
+cfip-avg.stoeaves.us.ci:8443#VPS789优选 | cfip-avg.stoeaves.us.ci
 cfip-ct.stoeaves.us.ci:8443#VPS789优选 | cfip-ct.stoeaves.us.ci
+cloudflare-ip.mofashi.ltd:8443#VPS789优选 | cloudflare-ip.mofashi.ltd
 cf.v8.longsays.com:8443#VPS789优选 | cf.v8.longsays.com
 www.shopify.com:8443#VPS789优选 | www.shopify.com
 store.ubi.com:8443#VPS789优选 | store.ubi.com
@@ -39,6 +41,7 @@ p.etime.vip:8443#VPS789优选 | p.etime.vip
 nexusmods.com:8443#VPS789优选 | nexusmods.com
 dnew.cc:8443#VPS789优选 | dnew.cc
 www.vmware.com:8443#VPS789优选 | www.vmware.com
+www.crazygames.fr:8443#VPS789优选 | www.crazygames.fr
 pwjbl.me:8443#VPS789优选 | pwjbl.me
 youxuan.cf.3666888.xyz:8443#VPS789优选 | youxuan.cf.3666888.xyz
 cf1s.cf.3666888.xyz:8443#VPS789优选 | cf1s.cf.3666888.xyz
@@ -46,7 +49,4 @@ cloudflare.rainyfall.com:8443#VPS789优选 | cloudflare.rainyfall.com
 eteaf.cf.3666888.xyz:8443#VPS789优选 | eteaf.cf.3666888.xyz
 1.cf.3666888.xyz:8443#VPS789优选 | 1.cf.3666888.xyz
 3.cf.3666888.xyz:8443#VPS789优选 | 3.cf.3666888.xyz
-5.cf.3666888.xyz:8443#VPS789优选 | 5.cf.3666888.xyz
-8.cf.3666888.xyz:8443#VPS789优选 | 8.cf.3666888.xyz
-www.xiaoshuofen.com:8443#VPS789优选 | www.xiaoshuofen.com
 162.159.197.1:8443#VPS789优选域名
