@@ -1,12 +1,12 @@
-162.159.198.1:443#VPS789优选域名 TOP10 | 09-14 21:18
-b3.cfyx.20237737.xyz:443#VPS789优选 | b3.cfyx.20237737.xyz
-cf.godns.cc:443#VPS789优选 | cf.godns.cc
-cdn.ddeed.de:443#VPS789优选 | cdn.ddeed.de
+162.159.198.1:443#VPS789优选域名 TOP10 | 09-15 06:00
 cfsaas.080112.xyz:443#VPS789优选 | cfsaas.080112.xyz
 cfyx.aliyun.20237737.xyz:443#VPS789优选 | cfyx.aliyun.20237737.xyz
-ctsg.cfyx.aliyun.20237737.xyz:443#VPS789优选 | ctsg.cfyx.aliyun.20237737.xyz
-play.mc.js.cool:443#VPS789优选 | play.mc.js.cool
-cf.877771.xyz:443#VPS789优选 | cf.877771.xyz
 yg4.ygkkk.dpdns.org:443#VPS789优选 | yg4.ygkkk.dpdns.org
-openai.com:443#VPS789优选 | openai.com
+ctsg.cfyx.aliyun.20237737.xyz:443#VPS789优选 | ctsg.cfyx.aliyun.20237737.xyz
+b3.cfyx.20237737.xyz:443#VPS789优选 | b3.cfyx.20237737.xyz
+cf.877771.xyz:443#VPS789优选 | cf.877771.xyz
+cf.godns.cc:443#VPS789优选 | cf.godns.cc
+cf.553314.xyz:443#VPS789优选 | cf.553314.xyz
+isp.254301.xyz:443#VPS789优选 | isp.254301.xyz
+cdn.2x.nz:443#VPS789优选 | cdn.2x.nz
 162.159.197.1:443#VPS789优选域名
